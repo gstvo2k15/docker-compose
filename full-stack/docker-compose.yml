@@ -1,11 +1,3 @@
-networks:
-  app-tier:
-    name: app-tier
-    driver: bridge
-  monitoring:
-    name: monitoring
-    driver: bridge    
-
 services:
   tomcat:
     image: tomcat:9.0
@@ -21,29 +13,15 @@ services:
     ports:
       - "9081:8081"
       - "9090:9090"
-    networks:
-      - app-tier
-      - monitoring
 
   jboss:
     image: jboss/wildfly:latest
     container_name: jboss
     environment:
-      JAVA_OPTS: >
-        -Xms512m -Xmx1g
-        -Dcom.sun.management.jmxremote
-        -Dcom.sun.management.jmxremote.port=9091
-        -Dcom.sun.management.jmxremote.ssl=false
-        -Dcom.sun.management.jmxremote.authenticate=false
-        -Djava.rmi.server.hostname=jboss
-        -Dcom.sun.management.jmxremote.rmi.port=9091
-        -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+      - JAVA_OPTS=-Xms512m -Xmx1g -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9091 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=jboss -Dcom.sun.management.jmxremote.rmi.port=9091 -Djava.util.logging.manager=org.jboss.logmanager.LogManager
     ports:
       - "9082:8082"
       - "9091:9091"
-    networks:
-      - app-tier
-      - monitoring
     command: >
       /bin/sh -c "/opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0 &&
       sleep 10 &&
@@ -71,44 +49,24 @@ services:
         soft: 65536
         hard: 65536
     volumes:
-      - ./domain.properties:/u01/oracle/properties/domain.properties:ro
-      - ./jmx.properties:/u01/oracle/properties/jmx.properties:ro
-      - ./boot.properties:/u01/oracle/user_projects/domains/base_domain/servers/AdminServer/security/boot.properties:ro
-    networks:
-      - app-tier
-      - monitoring
+      - ./security/boot.properties:/u01/oracle/user_projects/domains/base_domain/servers/AdminServer/security/boot.properties:ro
 
   websphere:
     image: websphere-liberty:latest
     container_name: websphere
     environment:
-      JVM_ARGS: >
-        -Xms512m -Xmx1g
-        -Dcom.sun.management.jmxremote
-        -Dcom.sun.management.jmxremote.port=9096
-        -Dcom.sun.management.jmxremote.ssl=false
-        -Dcom.sun.management.jmxremote.authenticate=false
-        -Djava.rmi.server.hostname=websphere
-        -Dcom.sun.management.jmxremote.rmi.port=9096
+      JVM_ARGS: "-Xms512m -Xmx1g -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9096 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=websphere -Dcom.sun.management.jmxremote.rmi.port=9096"
     ports:
       - "9084:8084"
       - "9096:9096"
-    networks:
-      - app-tier
-      - monitoring
     command: >
-      /bin/sh -c "sleep 10 &&
-      /opt/ibm/wlp/bin/server start defaultServer &&
-      /opt/ibm/wlp/bin/wsadmin.sh -lang jython -f /opt/ibm/wlp/config/configure_jmx.py"
+      /bin/sh -c "/opt/ibm/wlp/bin/server start defaultServer && sleep 10 && /opt/ibm/wlp/bin/wsadmin.sh -lang jython -f /opt/ibm/wlp/config/configure_jmx.py || echo 'Error en WebSphere'"
 
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
     ports:
       - "9100:9100"
-    networks:
-      - monitoring
-      - app-tier
 
   jmx-exporter-tomcat:
     image: bitnami/jmx-exporter:latest
@@ -118,9 +76,6 @@ services:
       - JMX_PORT=9090
     ports:
       - "1234:1234"
-    networks:
-      - monitoring
-      - app-tier
 
   jmx-exporter-jboss:
     image: bitnami/jmx-exporter:latest
@@ -130,9 +85,6 @@ services:
       - JMX_PORT=9091
     ports:
       - "1235:1235"
-    networks:
-      - monitoring
-      - app-tier
 
   jmx-exporter-weblogic:
     image: bitnami/jmx-exporter:latest
@@ -142,9 +94,6 @@ services:
       - JMX_PORT=9092
     ports:
       - "1236:1236"
-    networks:
-      - monitoring
-      - app-tier
 
   jmx-exporter-websphere:
     image: bitnami/jmx-exporter:latest
@@ -154,9 +103,6 @@ services:
       - JMX_PORT=9096
     ports:
       - "1237:1237"
-    networks:
-      - monitoring
-      - app-tier
 
   prometheus:
     image: prom/prometheus:latest
@@ -165,9 +111,6 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9990:8085"
-    networks:
-      - monitoring
-      - app-tier
 
   alertmanager:
     image: prom/alertmanager:latest
@@ -176,9 +119,6 @@ services:
       - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
     ports:
       - "9993:9093"
-    networks:
-      - monitoring
-      - app-tier
 
   grafana:
     image: grafana/grafana:latest
@@ -188,9 +128,6 @@ services:
     volumes:
       - ./grafana/dashboards:/var/lib/grafana/dashboards
       - ./grafana/provisioning:/etc/grafana/provisioning
-    networks:
-      - monitoring
-      - app-tier
 
   nginx:
     image: nginx:latest
@@ -200,6 +137,3 @@ services:
       - "9443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    networks:
-      - monitoring
-      - app-tier
