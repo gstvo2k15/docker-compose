@@ -29,7 +29,7 @@ services:
     image: jboss/wildfly:latest
     container_name: jboss
     environment:
-      JAVA_OPTS: > 
+      JAVA_OPTS: >
         -Xms512m -Xmx1g
         -Dcom.sun.management.jmxremote
         -Dcom.sun.management.jmxremote.port=9091
@@ -73,6 +73,7 @@ services:
     volumes:
       - ./domain.properties:/u01/oracle/properties/domain.properties:ro
       - ./jmx.properties:/u01/oracle/properties/jmx.properties:ro
+      - ./boot.properties:/u01/oracle/user_projects/domains/base_domain/servers/AdminServer/security/boot.properties:ro
     networks:
       - app-tier
       - monitoring
@@ -96,7 +97,8 @@ services:
       - app-tier
       - monitoring
     command: >
-      /bin/sh -c "sleep 10 && /opt/ibm/wlp/bin/server start defaultServer &&
+      /bin/sh -c "sleep 10 &&
+      /opt/ibm/wlp/bin/server start defaultServer &&
       /opt/ibm/wlp/bin/wsadmin.sh -lang jython -f /opt/ibm/wlp/config/configure_jmx.py"
 
   node-exporter:
