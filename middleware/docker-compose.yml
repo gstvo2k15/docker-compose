@@ -18,7 +18,7 @@ services:
         -Djava.rmi.server.hostname=tomcat
         -Dcom.sun.management.jmxremote.rmi.port=9090      
     ports:
-      - "9081:8080"
+      - "8081"
       - "9090:9090"
     networks:
       - app-tier
@@ -37,7 +37,7 @@ services:
         -Dcom.sun.management.jmxremote.rmi.port=9091
         -Djava.util.logging.manager=org.jboss.logmanager.LogManager
     ports:
-      - "9082:8080"
+      - "8082"
       - "9091:9091"
     networks:
       - app-tier
@@ -51,7 +51,7 @@ services:
       dockerfile: Dockerfile
     container_name: weblogic
     ports:
-      - "7001:7001"
+      - "8083"
       - "9092:9092"
     environment:
       - DOMAIN_NAME=base_domain
@@ -81,7 +81,7 @@ services:
         -Djava.rmi.server.hostname=websphere
         -Dcom.sun.management.jmxremote.rmi.port=9096      
     ports:
-      - "9084:9080"
+      - "8084"
       - "9096:9096"
     networks:
       - app-tier
