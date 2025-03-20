@@ -45,9 +45,9 @@ services:
     command: >
       /bin/sh -c "/opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0 && sleep 10 && /opt/jboss/wildfly/bin/jboss-cli.sh --connect --commands='/subsystem=jmx/remoting-connector=jmx:add()'"
 
-  weblogic-standalone:
+  weblogic:
     image: gstvo2k15/weblogic:12.2.1.4-developer
-    container_name: weblogic-standalone
+    container_name: weblogic
     ports:
       - "7001:7001"
       - "9092:9092"
