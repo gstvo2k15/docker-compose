@@ -1,0 +1,111 @@
+services:
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper-data:/bitnami/zookeeper
+    restart: always
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.1.170:9092
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka-data:/bitnami/kafka
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - cluster.name=elk-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsSL http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      retries: 3
+    restart: always
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.9
+    container_name: kibana
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    restart: always
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.17.9
+    container_name: logstash
+    depends_on:
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    environment:
+      - LS_JAVA_OPTS=-Xms512m -Xmx512m
+      - KAFKA_TOPIC=${KAFKA_TOPIC}
+      - ES_INDEX_PREFIX=${ES_INDEX_PREFIX}
+    restart: always
+
+  kibana-setup:
+    image: curlimages/curl:7.88.1
+    container_name: kibana-setup
+    depends_on:
+      - kibana
+    entrypoint: /bin/sh
+    command: >
+      -c "
+        echo 'Waitting 30 seconds that Kibana has been started...' &&
+        sleep 30 &&
+        echo 'Creating nginx index pattern*...' &&
+        curl -X POST 'http://kibana:5601/api/saved_objects/index-pattern' \
+          -H 'kbn-xsrf: true' \
+          -H 'Content-Type: application/json' \
+          -d '{
+            \"attributes\": {
+              \"title\": \"${KIBANA_INDEX_PATTERN}*\",
+              \"timeFieldName\": \"@timestamp\"
+            }
+          }' &&
+        echo 'Index pattern has been created correctly: ${KIBANA_INDEX_PATTERN}*'
+      "
+    
+    restart: "no"
+volumes:
+  esdata:
+  kafka-data:
+  zookeeper-data:
