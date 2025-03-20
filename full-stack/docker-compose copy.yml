@@ -1,6 +1,0 @@
-networks:
-  monitoring:
-    name: monitoring
-    driver: bridge
-  app-tier:
-    external: true
