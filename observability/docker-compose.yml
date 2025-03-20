@@ -101,7 +101,7 @@ services:
     image: nginx:latest
     container_name: reverse-proxy
     ports:
-      - "80:80"
+      - "80:9080"
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro

@@ -46,7 +46,9 @@ services:
       /bin/sh -c "/opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0 && sleep 10 && /opt/jboss/wildfly/bin/jboss-cli.sh --connect --commands='/subsystem=jmx/remoting-connector=jmx:add()'"
 
   weblogic:
-    image: gstvo2k15/weblogic:12.2.1.4-developer
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: weblogic
     ports:
       - "7001:7001"
@@ -73,14 +75,14 @@ services:
     environment:
       - JVM_ARGS=-Xms512m -Xmx1g
         -Dcom.sun.management.jmxremote
-        -Dcom.sun.management.jmxremote.port=9094
+        -Dcom.sun.management.jmxremote.port=9096
         -Dcom.sun.management.jmxremote.ssl=false
         -Dcom.sun.management.jmxremote.authenticate=false
         -Djava.rmi.server.hostname=websphere
-        -Dcom.sun.management.jmxremote.rmi.port=9094      
+        -Dcom.sun.management.jmxremote.rmi.port=9096      
     ports:
       - "9084:9080"
-      - "9094:9094"
+      - "9096:9096"
     networks:
       - app-tier
       - monitoring
