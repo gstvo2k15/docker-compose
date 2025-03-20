@@ -1,17 +1,13 @@
+version: '3.8'
+
 services:
   tomcat:
     image: tomcat:9.0
     container_name: tomcat
     environment:
-      - CATALINA_OPTS=-Xms256m -Xmx512m
-        -Dcom.sun.management.jmxremote
-        -Dcom.sun.management.jmxremote.port=9090
-        -Dcom.sun.management.jmxremote.ssl=false
-        -Dcom.sun.management.jmxremote.authenticate=false
-        -Djava.rmi.server.hostname=tomcat
-        -Dcom.sun.management.jmxremote.rmi.port=9090
+      - CATALINA_OPTS=-Xms256m -Xmx512m -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9090 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=tomcat -Dcom.sun.management.jmxremote.rmi.port=9090
     ports:
-      - "9081:8081"
+      - "9081:8080"
       - "9090:9090"
 
   jboss:
@@ -20,7 +16,7 @@ services:
     environment:
       - JAVA_OPTS=-Xms512m -Xmx1g -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9091 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=jboss -Dcom.sun.management.jmxremote.rmi.port=9091 -Djava.util.logging.manager=org.jboss.logmanager.LogManager
     ports:
-      - "9082:8082"
+      - "9082:8080"
       - "9091:9091"
     command: >
       /bin/sh -c "/opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0 &&
@@ -33,7 +29,7 @@ services:
       dockerfile: Dockerfile
     container_name: weblogic
     ports:
-      - "7001:8083"
+      - "7001:7001"
       - "9092:9092"
     environment:
       - DOMAIN_NAME=base_domain
@@ -57,7 +53,7 @@ services:
     environment:
       JVM_ARGS: "-Xms512m -Xmx1g -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9096 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=websphere -Dcom.sun.management.jmxremote.rmi.port=9096"
     ports:
-      - "9084:8084"
+      - "9084:9084"
       - "9096:9096"
     command: >
       /bin/sh -c "/opt/ibm/wlp/bin/server start defaultServer && sleep 10 && /opt/ibm/wlp/bin/wsadmin.sh -lang jython -f /opt/ibm/wlp/config/configure_jmx.py || echo 'Error en WebSphere'"
@@ -110,7 +106,7 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - "9990:8085"
+      - "9990:9090"
 
   alertmanager:
     image: prom/alertmanager:latest
@@ -124,7 +120,7 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3000:8087"
+      - "3000:3000"
     volumes:
       - ./grafana/dashboards:/var/lib/grafana/dashboards
       - ./grafana/provisioning:/etc/grafana/provisioning
