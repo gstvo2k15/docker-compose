@@ -1,0 +1,28 @@
+{
+    "dashboard": {
+      "title": "Tomcat Overview",
+      "panels": [
+        {
+          "title": "Active Sessions",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "tomcat_sessions_active",
+              "legendFormat": "Active Sessions"
+            }
+          ]
+        },
+        {
+          "title": "JVM Memory Usage",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "jvm_memory_bytes_used / jvm_memory_bytes_max",
+              "legendFormat": "Memory Usage"
+            }
+          ]
+        }
+      ]
+    }
+  }
+  

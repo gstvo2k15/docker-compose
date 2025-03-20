@@ -1,0 +1,41 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - "alertmanager:9093"
+
+rule_files:
+  - "/etc/prometheus/alert-rules.yml"
+
+scrape_configs:
+  - job_name: "nginx"
+    static_configs:
+      - targets: ["nginx:80"]
+
+  - job_name: "tomcat"
+    static_configs:
+      - targets: ["tomcat:1234"]
+
+  - job_name: "jboss"
+    static_configs:
+      - targets: ["jboss:1234"]
+
+  - job_name: "weblogic"
+    static_configs:
+      - targets: ["weblogic:1234"]
+
+  - job_name: "websphere"
+    static_configs:
+      - targets: ["websphere:1234"]
+
+  - job_name: "elasticsearch"
+    static_configs:
+      - targets: ["elasticsearch:9200"]
+
+  - job_name: "logstash"
+    static_configs:
+      - targets: ["logstash:5044"]

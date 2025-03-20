@@ -1,0 +1,47 @@
+groups:
+  - name: application_alerts
+    rules:
+      - alert: TomcatDown
+        expr: up{job="tomcat"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Tomcat is not available"
+          description: "Tomcat has not responsed in last 60 seconds."
+
+      - alert: JBossHighCPU
+        expr: process_cpu_seconds_total{job="jboss"} > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "JBoss high CPU usage"
+          description: "CPU usage in JBoss greater than 80% since 5 minutes."
+
+      - alert: WebLogicDown
+        expr: up{job="weblogic"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "WebLogic is not available"
+          description: "WebLogic not response since 1 minute."
+
+      - alert: WebSphereMemoryHigh
+        expr: jvm_memory_bytes_used{job="websphere"} / jvm_memory_bytes_max{job="websphere"} > 0.9
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "WebSphere consumes high memory"
+          description: "WebSphere memory resources has passed 90% since 2 minutes."
+
+      - alert: NginxDown
+        expr: up{job="nginx"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Nginx not works"
+          description: "Nginx not response in 80 port since 1 minute."
