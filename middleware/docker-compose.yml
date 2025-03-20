@@ -1,0 +1,43 @@
+networks:
+  app-tier:
+
+services:
+  tomcat:
+    image: tomcat:9.0
+    container_name: tomcat
+    environment:
+      - CATALINA_OPTS=-Xms256m -Xmx512m
+    ports:
+      - "9081:8080"
+    networks:
+      - app-tier
+
+  jboss:
+    image: jboss/wildfly:latest
+    container_name: jboss
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx1g
+    ports:
+      - "9082:8080"
+    networks:
+      - app-tier
+
+  weblogic:
+    image: gstvo2k15/weblogic:12.2.1.4-developer
+    container_name: weblogic
+    environment:
+      - USER_MEM_ARGS=-Xms1g -Xmx2g
+    ports:
+      - "9083:7001"
+    networks:
+      - app-tier
+
+  websphere:
+    image: websphere-liberty:latest
+    container_name: websphere
+    environment:
+      - JVM_ARGS=-Xms512m -Xmx1g
+    ports:
+      - "9084:9080"
+    networks:
+      - app-tier

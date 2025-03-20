@@ -1,0 +1,80 @@
+networks:
+  monitoring:
+
+services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - monitoring
+
+  jmx-exporter-tomcat:
+    image: bitnami/jmx-exporter:latest
+    container_name: jmx-exporter-tomcat
+    environment:
+      - JMX_HOST=tomcat
+      - JMX_PORT=1234
+    ports:
+      - "1234:1234"
+    networks:
+      - monitoring
+      - app-tier
+
+  jmx-exporter-jboss:
+    image: bitnami/jmx-exporter:latest
+    container_name: jmx-exporter-jboss
+    environment:
+      - JMX_HOST=jboss
+      - JMX_PORT=1235
+    ports:
+      - "1235:1235"
+    networks:
+      - monitoring
+      - app-tier
+
+  jmx-exporter-weblogic:
+    image: bitnami/jmx-exporter:latest
+    container_name: jmx-exporter-weblogic
+    environment:
+      - JMX_HOST=weblogic
+      - JMX_PORT=1236
+    ports:
+      - "1236:1236"
+    networks:
+      - monitoring
+      - app-tier
+
+  jmx-exporter-websphere:
+    image: bitnami/jmx-exporter:latest
+    container_name: jmx-exporter-websphere
+    environment:
+      - JMX_HOST=websphere
+      - JMX_PORT=1237
+    ports:
+      - "1237:1237"
+    networks:
+      - monitoring
+      - app-tier
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - monitoring
