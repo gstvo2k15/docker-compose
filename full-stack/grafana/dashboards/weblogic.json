@@ -1,28 +1,30 @@
 {
-    "dashboard": {
-      "title": "WebLogic Monitoring",
-      "panels": [
-        {
-          "title": "CPU Usage",
-          "type": "graph",
-          "targets": [
-            {
-              "expr": "process_cpu_seconds_total{job='weblogic'}",
-              "legendFormat": "CPU Usage"
-            }
-          ]
-        },
-        {
-          "title": "HTTP Requests",
-          "type": "graph",
-          "targets": [
-            {
-              "expr": "weblogic_requests_total",
-              "legendFormat": "HTTP Requests"
-            }
-          ]
-        }
-      ]
-    }
+  "dashboard": {
+    "uid": "weblogic-monitoring",
+    "title": "WebLogic Monitoring",
+    "schemaVersion": 18,
+    "version": 1,
+    "panels": [
+      {
+        "title": "CPU Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "process_cpu_seconds_total{job='weblogic'}",
+            "legendFormat": "CPU Usage"
+          }
+        ]
+      },
+      {
+        "title": "HTTP Requests",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "weblogic_requests_total",
+            "legendFormat": "HTTP Requests"
+          }
+        ]
+      }
+    ]
   }
-  
+}

@@ -1,28 +1,30 @@
 {
-    "dashboard": {
-      "title": "Nginx Monitoring",
-      "panels": [
-        {
-          "title": "Active Connections",
-          "type": "graph",
-          "targets": [
-            {
-              "expr": "nginx_connections_active",
-              "legendFormat": "Active Connections"
-            }
-          ]
-        },
-        {
-          "title": "Requests Per Second",
-          "type": "graph",
-          "targets": [
-            {
-              "expr": "rate(nginx_requests_total[1m])",
-              "legendFormat": "Requests/sec"
-            }
-          ]
-        }
-      ]
-    }
+  "dashboard": {
+    "uid": "nginx-monitoring",
+    "title": "Nginx Monitoring",
+    "schemaVersion": 18,
+    "version": 1,
+    "panels": [
+      {
+        "title": "Active Connections",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "nginx_connections_active",
+            "legendFormat": "Active Connections"
+          }
+        ]
+      },
+      {
+        "title": "Requests Per Second",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(nginx_requests_total[1m])",
+            "legendFormat": "Requests/sec"
+          }
+        ]
+      }
+    ]
   }
-  
+}

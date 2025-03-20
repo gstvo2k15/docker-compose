@@ -1,28 +1,30 @@
 {
-    "dashboard": {
-      "title": "WebSphere Monitoring",
-      "panels": [
-        {
-          "title": "Active Threads",
-          "type": "graph",
-          "targets": [
-            {
-              "expr": "websphere_thread_count",
-              "legendFormat": "Active Threads"
-            }
-          ]
-        },
-        {
-          "title": "Heap Memory",
-          "type": "graph",
-          "targets": [
-            {
-              "expr": "jvm_memory_bytes_used{job='websphere'} / jvm_memory_bytes_max{job='websphere'}",
-              "legendFormat": "Heap Usage"
-            }
-          ]
-        }
-      ]
-    }
+  "dashboard": {
+    "uid": "websphere-monitoring",
+    "title": "WebSphere Monitoring",
+    "schemaVersion": 18,
+    "version": 1,
+    "panels": [
+      {
+        "title": "Active Threads",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "websphere_thread_count",
+            "legendFormat": "Active Threads"
+          }
+        ]
+      },
+      {
+        "title": "Heap Memory",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_memory_bytes_used{job='websphere'} / jvm_memory_bytes_max{job='websphere'}",
+            "legendFormat": "Heap Usage"
+          }
+        ]
+      }
+    ]
   }
-  
+}

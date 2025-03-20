@@ -62,7 +62,11 @@ services:
       - ADMIN_PASSWORD=weblogic123
       - ADMINISTRATION_PORT_ENABLED=false
       - PRODUCTION_MODE=dev
-      - USER_MEM_ARGS=-Xms1g -Xmx2g
+      - USER_MEM_ARGS=-Xms512m -Xmx1g
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     volumes:
       - ./domain.properties:/u01/oracle/properties/domain.properties:ro
       - ./jmx.properties:/u01/oracle/properties/jmx.properties:ro
@@ -141,7 +145,7 @@ services:
     container_name: jmx-exporter-websphere
     environment:
       - JMX_HOST=websphere
-      - JMX_PORT=9093
+      - JMX_PORT=9096
     ports:
       - "1237:1237"
     networks:

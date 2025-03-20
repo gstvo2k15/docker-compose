@@ -1,28 +1,30 @@
 {
-    "dashboard": {
-      "title": "JBoss Overview",
-      "panels": [
-        {
-          "title": "Thread Count",
-          "type": "graph",
-          "targets": [
-            {
-              "expr": "jvm_threads_live",
-              "legendFormat": "Live Threads"
-            }
-          ]
-        },
-        {
-          "title": "Heap Memory Usage",
-          "type": "graph",
-          "targets": [
-            {
-              "expr": "jvm_memory_bytes_used{job='jboss'} / jvm_memory_bytes_max{job='jboss'}",
-              "legendFormat": "Heap Usage"
-            }
-          ]
-        }
-      ]
-    }
+  "dashboard": {
+    "uid": "jboss-overview",
+    "title": "JBoss Overview",
+    "schemaVersion": 18,
+    "version": 1,
+    "panels": [
+      {
+        "title": "Thread Count",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_threads_live",
+            "legendFormat": "Live Threads"
+          }
+        ]
+      },
+      {
+        "title": "Heap Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_memory_bytes_used{job='jboss'} / jvm_memory_bytes_max{job='jboss'}",
+            "legendFormat": "Heap Usage"
+          }
+        ]
+      }
+    ]
   }
-  
+}

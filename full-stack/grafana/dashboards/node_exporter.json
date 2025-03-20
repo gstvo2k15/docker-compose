@@ -1,28 +1,30 @@
 {
-    "dashboard": {
-      "title": "Host Monitoring",
-      "panels": [
-        {
-          "title": "CPU Usage",
-          "type": "graph",
-          "targets": [
-            {
-              "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)",
-              "legendFormat": "CPU Usage"
-            }
-          ]
-        },
-        {
-          "title": "Memory Usage",
-          "type": "graph",
-          "targets": [
-            {
-              "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes",
-              "legendFormat": "Memory Usage"
-            }
-          ]
-        }
-      ]
-    }
+  "dashboard": {
+    "uid": "node-exporter-monitoring",
+    "title": "Host Monitoring",
+    "schemaVersion": 18,
+    "version": 1,
+    "panels": [
+      {
+        "title": "CPU Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)",
+            "legendFormat": "CPU Usage"
+          }
+        ]
+      },
+      {
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes",
+            "legendFormat": "Memory Usage"
+          }
+        ]
+      }
+    ]
   }
-  
+}
