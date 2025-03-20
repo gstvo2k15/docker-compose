@@ -108,3 +108,8 @@ services:
     networks:
       - monitoring
       - app-tier
+    depends_on:
+      - tomcat
+      - jboss
+      - weblogic
+      - websphere

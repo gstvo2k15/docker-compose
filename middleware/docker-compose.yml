@@ -34,7 +34,8 @@ services:
         -Dcom.sun.management.jmxremote.ssl=false
         -Dcom.sun.management.jmxremote.authenticate=false
         -Djava.rmi.server.hostname=jboss
-        -Dcom.sun.management.jmxremote.rmi.port=9091      
+        -Dcom.sun.management.jmxremote.rmi.port=9091
+        -Djava.util.logging.manager=org.jboss.logmanager.LogManager
     ports:
       - "9082:8080"
       - "9091:9091"
@@ -44,18 +45,27 @@ services:
     command: >
       /bin/sh -c "/opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0 && sleep 10 && /opt/jboss/wildfly/bin/jboss-cli.sh --connect --commands='/subsystem=jmx/remoting-connector=jmx:add()'"
 
-  weblogic:
+  weblogic-standalone:
     image: gstvo2k15/weblogic:12.2.1.4-developer
-    container_name: weblogic
-    environment:
-      - USER_MEM_ARGS=-Xms1g -Xmx2g
+    container_name: weblogic-standalone
     ports:
-      - "9083:7001"
+      - "7001:7001"
+      - "9092:9092"
+    environment:
+      - DOMAIN_NAME=base_domain
+      - ADMIN_NAME=AdminServer
+      - ADMIN_PORT=7001
+      - ADMIN_USERNAME=weblogic
+      - ADMIN_PASSWORD=weblogic123
+      - ADMINISTRATION_PORT_ENABLED=false
+      - PRODUCTION_MODE=dev
+      - USER_MEM_ARGS=-Xms1g -Xmx2g
+    volumes:
+      - ./domain.properties:/u01/oracle/properties/domain.properties:ro
+      - ./jmx.properties:/u01/oracle/properties/jmx.properties:ro
     networks:
       - app-tier
       - monitoring
-    command: >
-      /bin/sh -c "/u01/oracle/startWebLogic.sh && sleep 10 && /u01/oracle/oracle_common/common/bin/wlst.sh /u01/oracle/configure_jmx_weblogic.py"
 
   websphere:
     image: websphere-liberty:latest
@@ -63,14 +73,14 @@ services:
     environment:
       - JVM_ARGS=-Xms512m -Xmx1g
         -Dcom.sun.management.jmxremote
-        -Dcom.sun.management.jmxremote.port=9093
+        -Dcom.sun.management.jmxremote.port=9094
         -Dcom.sun.management.jmxremote.ssl=false
         -Dcom.sun.management.jmxremote.authenticate=false
         -Djava.rmi.server.hostname=websphere
-        -Dcom.sun.management.jmxremote.rmi.port=9093      
+        -Dcom.sun.management.jmxremote.rmi.port=9094      
     ports:
       - "9084:9080"
-      - "9093:9093"
+      - "9094:9094"
     networks:
       - app-tier
       - monitoring
