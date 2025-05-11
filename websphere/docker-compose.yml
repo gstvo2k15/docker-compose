@@ -1,13 +1,14 @@
 services:
-  websphere-liberty:
-    image: icr.io/appcafe/websphere-liberty:21.0.0.12-full-java11-openj9-ubi-amd64
-    container_name: websphere-liberty
+  websphere-traditional:
+    build: .
+    container_name: websphere-traditional
     ports:
       - "9080:9080"
       - "9443:9443"
+      - "9043:9043"  # ISC (Integrated Solutions Console)
+      - "9401:9401"  # SOAP Connector Port
     environment:
       - LICENSE=accept
-      - WLP_USER_NAME=admin
-      - WLP_USER_PASSWORD=adminpassword
+      - PROFILE_NAME=AppSrv01
     volumes:
-      - ./server:/config
+      - ./logs:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/logs
