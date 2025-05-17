@@ -10,3 +10,9 @@ services:
     environment:
       - LICENSE=accept
       - PROFILE_NAME=AppSrv01
+    command: >
+      sh -c "
+        mkdir -p /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/logs/server1 &&
+        chown -R was:root /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/logs &&
+        /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/bin/startServer.sh server1
+      "
