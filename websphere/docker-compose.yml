@@ -10,5 +10,3 @@ services:
     environment:
       - LICENSE=accept
       - PROFILE_NAME=AppSrv01
-    volumes:
-      - ./logs:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/logs
