@@ -1,4 +1,6 @@
-### Steps to execute project
+# WebSphere Traditional Deployment with Docker Compose
+
+## Execution Steps
 
 ```bash
 git clone https://github.com/gstvo2k15/docker-compose.git
@@ -29,13 +31,15 @@ docker compose ps && docker compose logs -f --tail=15
 ### How to obtain credentials
 
 ```bash
-docker compose exec -it websphere-traditional bash`
+docker compose exec -it websphere-traditional bash
 
-vi /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/config/cells/*/security.xml
+/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/bin/wsadmin.sh -lang jython -conntype NONE -f /work/config/disableSecurity.py
+
 exit
 
 docker compose restart
 ```
+
 
 ### Logs review:
 
@@ -57,4 +61,13 @@ websphere-traditional  | ADMU0116I: Tool information is being logged in file
 websphere-traditional  |            /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/logs/server1/startServer.log
 websphere-traditional  | ADMU0128I: Starting tool with the AppSrv01 profile
 websphere-traditional  | ADMU3100I: Reading configuration for server: server1
+```
+
+
+### Posible ulimits to change
+
+```bash
+ulimit -n 65536
+ulimit -s 16384
+ulimit -l unlimited
 ```
