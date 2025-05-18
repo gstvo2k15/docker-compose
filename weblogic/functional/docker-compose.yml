@@ -1,5 +1,5 @@
 services:
-  # Standalone AdminServer
+  # Standalone
   weblogic-standalone:
     image: gstvo2k15/weblogic:12.2.1.4-developer
     container_name: weblogic-standalone
@@ -16,7 +16,7 @@ services:
     volumes:
       - ./domain.properties:/u01/oracle/properties/domain.properties:ro
 
-  # Domain Mode AdminServer
+  # Host Controller
   weblogic-admin:
     image: gstvo2k15/weblogic:12.2.1.4-developer
     container_name: weblogic-admin
@@ -30,60 +30,42 @@ services:
       - ADMIN_PASSWORD=weblogic123
       - ADMINISTRATION_PORT_ENABLED=false
       - PRODUCTION_MODE=dev
-      - CLUSTER_NAME=Cluster1
     volumes:
       - ./domain.properties:/u01/oracle/properties/domain.properties:ro
 
-  # Managed Server 1
   weblogic-managed-1:
     image: gstvo2k15/weblogic:12.2.1.4-developer
     container_name: weblogic-managed-1
-    ports:
-      - "8001:7001"
     environment:
       - DOMAIN_NAME=domain1
-      - ADMIN_HOST=weblogic-admin
+      - ADMIN_NAME=AdminServer
       - ADMIN_PORT=7001
-      - MANAGED_NAME=ManagedServer1
+      - ADMIN_USERNAME=weblogic
+      - ADMIN_PASSWORD=weblogic123
+      - ADMINISTRATION_PORT_ENABLED=false
       - PRODUCTION_MODE=dev
-      - CLUSTER_NAME=Cluster1
     depends_on:
       - weblogic-admin
     volumes:
       - ./domain.properties:/u01/oracle/properties/domain.properties:ro
 
-  # Managed Server 2
   weblogic-managed-2:
     image: gstvo2k15/weblogic:12.2.1.4-developer
     container_name: weblogic-managed-2
-    ports:
-      - "8002:7001"
     environment:
       - DOMAIN_NAME=domain1
-      - ADMIN_HOST=weblogic-admin
+      - ADMIN_NAME=AdminServer
       - ADMIN_PORT=7001
-      - MANAGED_NAME=ManagedServer2
+      - ADMIN_USERNAME=weblogic
+      - ADMIN_PASSWORD=weblogic123
+      - ADMINISTRATION_PORT_ENABLED=false
       - PRODUCTION_MODE=dev
-      - CLUSTER_NAME=Cluster1
     depends_on:
       - weblogic-admin
     volumes:
       - ./domain.properties:/u01/oracle/properties/domain.properties:ro
 
-  # Standalone Managed Server (Optional, without AdminServer)
-  weblogic-standalone-managed:
-    image: gstvo2k15/weblogic:12.2.1.4-developer
-    container_name: weblogic-standalone-managed
-    ports:
-      - "9001:7001"
-    environment:
-      - DOMAIN_NAME=standalone_domain
-      - MANAGED_NAME=StandaloneManagedServer
-      - PRODUCTION_MODE=dev
-    volumes:
-      - ./domain.properties:/u01/oracle/properties/domain.properties:ro
-
-  # Load Balancer
+  # Load balancer for cluster mode
   nginx-load-balancer:
     image: nginx:latest
     container_name: nginx-weblogic-lb
@@ -94,3 +76,4 @@ services:
     depends_on:
       - weblogic-managed-1
       - weblogic-managed-2
+
