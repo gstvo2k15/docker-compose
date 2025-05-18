@@ -1,7 +1,7 @@
 services:
   # Standalone
   weblogic-standalone:
-    image: store/oracle/weblogic:12.2.1.4
+    image: gstvo2k15/weblogic:12.2.1.4-developer
     container_name: weblogic-standalone
     ports:
       - "7001:7001"
@@ -9,54 +9,67 @@ services:
       - DOMAIN_NAME=base_domain
       - ADMIN_NAME=AdminServer
       - ADMIN_PORT=7001
+      - ADMIN_USERNAME=weblogic
       - ADMIN_PASSWORD=weblogic123
+      - ADMINISTRATION_PORT_ENABLED=false
+      - PRODUCTION_MODE=dev
     volumes:
-      - ./config:/u01/oracle/user_projects/domains/base_domain/config
+      - ./domain.properties:/u01/oracle/properties/domain.properties:ro
 
-  # Domain mode with multiple nodes
   weblogic-admin:
-    image: store/oracle/weblogic:12.2.1.4
+    image: gstvo2k15/weblogic:12.2.1.4-developer
     container_name: weblogic-admin
     ports:
-      - "7001:7001"
+      - "7002:7001"
     environment:
       - DOMAIN_NAME=domain1
       - ADMIN_NAME=AdminServer
       - ADMIN_PORT=7001
+      - ADMIN_USERNAME=weblogic
       - ADMIN_PASSWORD=weblogic123
+      - ADMINISTRATION_PORT_ENABLED=false
+      - PRODUCTION_MODE=dev
     volumes:
-      - ./config:/u01/oracle/user_projects/domains/domain1/config
+      - ./domain.properties:/u01/oracle/properties/domain.properties:ro
 
   weblogic-managed-1:
-    image: store/oracle/weblogic:12.2.1.4
+    image: gstvo2k15/weblogic:12.2.1.4-developer
     container_name: weblogic-managed-1
     environment:
       - DOMAIN_NAME=domain1
-      - MANAGED_SERVER_NAME=ManagedServer1
+      - ADMIN_NAME=AdminServer
       - ADMIN_PORT=7001
-      - ADMIN_HOST=weblogic-admin
+      - ADMIN_USERNAME=weblogic
       - ADMIN_PASSWORD=weblogic123
+      - ADMINISTRATION_PORT_ENABLED=false
+      - PRODUCTION_MODE=dev
     depends_on:
       - weblogic-admin
+    volumes:
+      - ./domain.properties:/u01/oracle/properties/domain.properties:ro
 
   weblogic-managed-2:
-    image: store/oracle/weblogic:12.2.1.4
+    image: gstvo2k15/weblogic:12.2.1.4-developer
     container_name: weblogic-managed-2
     environment:
       - DOMAIN_NAME=domain1
-      - MANAGED_SERVER_NAME=ManagedServer2
+      - ADMIN_NAME=AdminServer
       - ADMIN_PORT=7001
-      - ADMIN_HOST=weblogic-admin
+      - ADMIN_USERNAME=weblogic
       - ADMIN_PASSWORD=weblogic123
+      - ADMINISTRATION_PORT_ENABLED=false
+      - PRODUCTION_MODE=dev
     depends_on:
       - weblogic-admin
+    volumes:
+      - ./domain.properties:/u01/oracle/properties/domain.properties:ro
 
   # Load balancer for cluster mode
   nginx-load-balancer:
     image: nginx:latest
     container_name: nginx-weblogic-lb
     ports:
-      - "80:80"
+      - "80:9080"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
