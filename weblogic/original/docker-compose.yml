@@ -1,0 +1,75 @@
+services:
+  weblogic-standalone:
+    image: gstvo2k15/weblogic:12.2.1.4-developer
+    container_name: weblogic-standalone
+    ports:
+      - "7001:7001"
+    environment:
+      - DOMAIN_NAME=base_domain
+      - ADMIN_NAME=AdminServer
+      - ADMIN_PORT=7001
+      - ADMIN_USERNAME=weblogic
+      - ADMIN_PASSWORD=weblogic123
+      - ADMINISTRATION_PORT_ENABLED=false
+      - PRODUCTION_MODE=dev
+    volumes:
+      - ./domain.properties:/u01/oracle/properties/domain.properties:ro
+
+  weblogic-admin:
+    image: gstvo2k15/weblogic:12.2.1.4-developer
+    container_name: weblogic-admin
+    ports:
+      - "7002:7001"
+    environment:
+      - DOMAIN_NAME=domain1
+      - ADMIN_NAME=AdminServer
+      - ADMIN_PORT=7001
+      - ADMIN_USERNAME=weblogic
+      - ADMIN_PASSWORD=weblogic123
+      - ADMINISTRATION_PORT_ENABLED=false
+      - PRODUCTION_MODE=dev
+    volumes:
+      - ./domain.properties:/u01/oracle/properties/domain.properties:ro
+
+  weblogic-managed-1:
+    image: gstvo2k15/weblogic:12.2.1.4-developer
+    container_name: weblogic-managed-1
+    environment:
+      - DOMAIN_NAME=domain1
+      - ADMIN_NAME=AdminServer
+      - ADMIN_PORT=7001
+      - ADMIN_USERNAME=weblogic
+      - ADMIN_PASSWORD=weblogic123
+      - ADMINISTRATION_PORT_ENABLED=false
+      - PRODUCTION_MODE=dev
+    depends_on:
+      - weblogic-admin
+    volumes:
+      - ./domain.properties:/u01/oracle/properties/domain.properties:ro
+
+  weblogic-managed-2:
+    image: gstvo2k15/weblogic:12.2.1.4-developer
+    container_name: weblogic-managed-2
+    environment:
+      - DOMAIN_NAME=domain1
+      - ADMIN_NAME=AdminServer
+      - ADMIN_PORT=7001
+      - ADMIN_USERNAME=weblogic
+      - ADMIN_PASSWORD=weblogic123
+      - ADMINISTRATION_PORT_ENABLED=false
+      - PRODUCTION_MODE=dev
+    depends_on:
+      - weblogic-admin
+    volumes:
+      - ./domain.properties:/u01/oracle/properties/domain.properties:ro
+
+  nginx-load-balancer:
+    image: bitnami/nginx:1.27
+    container_name: nginx-weblogic-lb
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - weblogic-managed-1
+      - weblogic-managed-2
