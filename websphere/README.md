@@ -71,3 +71,30 @@ ulimit -n 65536
 ulimit -s 16384
 ulimit -l unlimited
 ```
+
+
+### Docker run locally without compose
+
+```bash
+[root@rocky9vm02 websphere]# docker run -it --rm --privileged -p 9080:9080 -p 9443:9443 -p 9043:9043 -p 9401:9401 icr.io/appcafe/websphere-traditional:8.5.5.22 bash
+docker run -it --rm --privileged -p 9080:9080 -p 9443:9443 -p 9043:9043 -p 9401:9401 icr.io/appcafe/websphere-traditional:8.5.5.22 bash
+Unable to find image 'icr.io/appcafe/websphere-traditional:8.5.5.22' locally
+8.5.5.22: Pulling from appcafe/websphere-traditional
+af645e7d95ec: Already exists
+5da1f14559d5: Already exists
+dce110038a94: Already exists
+20c91b1c9b7a: Already exists
+53a298c9af4c: Already exists
+d3472f7c1bb0: Already exists
+34c3a51c062e: Already exists
+3380a4654a79: Already exists
+1865fa60a723: Already exists
+281e0231fefb: Already exists
+Digest: sha256:2a385c56f3e6781cc595d873473efd5ef7cb4f34e88c6cf8381121332fb49c9c
+Status: Downloaded newer image for icr.io/appcafe/websphere-traditional:8.5.5.22
+
+[was@de479c78618b /]$ /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/bin/startServer.sh server1
+
+
+docker logs -f --tail=25 de479c78618b
+```
