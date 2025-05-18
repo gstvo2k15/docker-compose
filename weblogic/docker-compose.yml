@@ -16,6 +16,7 @@ services:
     volumes:
       - ./domain.properties:/u01/oracle/properties/domain.properties:ro
 
+  # Host Controller
   weblogic-admin:
     image: gstvo2k15/weblogic:12.2.1.4-developer
     container_name: weblogic-admin
