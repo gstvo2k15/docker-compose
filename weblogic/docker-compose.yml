@@ -1,4 +1,5 @@
 services:
+  # Standalone
   weblogic-standalone:
     image: gstvo2k15/weblogic:12.2.1.4-developer
     container_name: weblogic-standalone
@@ -15,6 +16,7 @@ services:
     volumes:
       - ./domain.properties:/u01/oracle/properties/domain.properties:ro
 
+  # Domain mode with multiple nodes
   weblogic-admin:
     image: gstvo2k15/weblogic:12.2.1.4-developer
     container_name: weblogic-admin
@@ -63,6 +65,7 @@ services:
     volumes:
       - ./domain.properties:/u01/oracle/properties/domain.properties:ro
 
+  # Load balancer for cluster mode
   nginx-load-balancer:
     image: bitnami/nginx:1.27
     container_name: nginx-weblogic-lb
